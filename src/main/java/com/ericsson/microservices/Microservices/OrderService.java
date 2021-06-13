@@ -90,15 +90,59 @@ public class OrderService {
 					return inventoryError.toString();
 				}	
 			}
+			return inventoryMessageSuccess.toString();
 			
 		}
 		catch(Exception e) {
 			return internalError.toString();
 		}
+	}
+	
+public String validateAndExecuteOrder(List<CartDetails> inventories) {
 		
+		List<ItemDetails> itemDetailsList = new ArrayList<ItemDetails>();
 		
+		try {
+			
+			for(int i=0;i<inventories.size();i++) {
+				
+				if(inventories.get(i).getItemCode().equals(inventory.get(0).getItemCode())) {
+					if(inventories.get(i).getQuantity()<=inventory.get(0).getQuantity()) {
+						
+						itemDetails = new ItemDetails(inventories.get(i).getItemCode(), inventories.get(i).getQuantity(),true);
+						itemDetailsList.add(itemDetails);
+						inventoryMessageSuccess = new InventorySuccessMessage("success", itemDetailsList);
+					}
+					else {
+						itemDetails = new ItemDetails(inventories.get(i).getItemCode(), inventories.get(i).getQuantity(),false);
+						itemDetailsList.add(itemDetails);
+						inventoryMessageSuccess = new InventorySuccessMessage("success", itemDetailsList);
+					}
+					
+				}
+				else if(inventories.get(i).getItemCode().equals(inventory.get(1).getItemCode())) {
+					if(inventories.get(i).getQuantity()<=inventory.get(1).getQuantity()) {
+						itemDetails = new ItemDetails(inventories.get(i).getItemCode(), inventories.get(i).getQuantity(),true);
+						itemDetailsList.add(itemDetails);
+						inventoryMessageSuccess = new InventorySuccessMessage("success", itemDetailsList);
+					}
+					else {
+						itemDetails = new ItemDetails(inventories.get(i).getItemCode(), inventories.get(i).getQuantity(),false);
+						itemDetailsList.add(itemDetails);
+						inventoryMessageSuccess = new InventorySuccessMessage("success", itemDetailsList);
+					}
+				}
+				else {
+					return inventoryError.toString();
+				}	
+			}
+			return inventoryMessageSuccess.toString();
+		}
+		catch(Exception e) {
+			return internalError.toString();
+		}
+
 		
-		return inventoryMessageSuccess.toString();
 		
 		
 	}

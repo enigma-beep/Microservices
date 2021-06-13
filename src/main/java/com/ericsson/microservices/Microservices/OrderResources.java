@@ -8,22 +8,39 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
 
+
+//@RequestMapping("/executeOrder")
 @RestController
-@RequestMapping("/executeOrder")
 public class OrderResources {
 
 	@Autowired
 	OrderService orderService;
 	
-	@PostMapping("/new")
+	@PostMapping("/executeOrder")
 	public ResponseEntity<String> newOrder(@RequestBody Order orders){
 		
-		return new ResponseEntity<String>(orderService.newOrder(orders),HttpStatus.OK);
+		
+		ResponseEntity<String> orderResponse = new ResponseEntity<String>(orderService.newOrder(orders),HttpStatus.OK);
+		
+		List<CartDetails> cartDetails = orders.getCartDetails();
+		
+		String validateResponse = orderService.validateAndExecuteOrder(cartDetails);
+		
+		if(validateResponse.equals(orderService.inventoryError.toString())) {
+			return new ResponseEntity<String>(validateResponse,HttpStatus.OK);
+		}
+		else if(validateResponse.contains("false")) {
+			return new ResponseEntity<String>(orderService.inventoryError.toString(),HttpStatus.OK);
+		}
+		else {
+			return orderResponse;
+		}
+		
+		
 	}
 	
 	@PostMapping("/validateOrder")
@@ -32,7 +49,7 @@ public class OrderResources {
 		return new ResponseEntity<String>(orderService.validateOrder(inventories),HttpStatus.OK);
 	}
 	
-	@GetMapping("/getall")
+	@GetMapping("/getOrders")
 	private ResponseEntity<List<Order>> getAllOrders(){
 		return new ResponseEntity<List<Order>>(orderService.getAllOrders(),HttpStatus.OK);
 	} 
