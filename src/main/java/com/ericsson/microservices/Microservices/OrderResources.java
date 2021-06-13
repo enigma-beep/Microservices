@@ -27,7 +27,7 @@ public class OrderResources {
 	}
 	
 	@PostMapping("/validateOrder")
-	public ResponseEntity<String> validateOrder(@RequestBody Inventory inventories){
+	public ResponseEntity<String> validateOrder(@RequestBody List<Inventory> inventories){
 		
 		return new ResponseEntity<String>(orderService.validateOrder(inventories),HttpStatus.OK);
 	}
